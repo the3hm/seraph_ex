@@ -34,7 +34,7 @@ defmodule Game.Session.Process do
 
   @save_period 15_000
   @force_disconnect_period 5_000
-  @heartbeat_timeout 60_000
+  @heartbeat_timeout 5_000
 
   @timeout_check 5000
   @timeout_seconds Application.get_env(:ex_venture, :game)[:timeout_seconds]
@@ -81,7 +81,8 @@ defmodule Game.Session.Process do
       commands: %{},
       skills: %{},
       stats: %SessionStats{},
-      is_afk: false
+      is_afk: false,
+      last_weather_update: now
     }
   end
 
@@ -322,6 +323,29 @@ defmodule Game.Session.Process do
 
   def handle_info(:inactive_check, state) do
     {:noreply, check_for_inactive(state)}
+  end
+
+  def handle_info(:heartbeat, state = %{state: "active"}) do
+    state |> GMCP.heartbeat()
+    state |> Socket.nop()
+
+    # Check for periodic weather updates when player is active
+    # Add try-catch to prevent crashes during heartbeat
+    new_state = try do
+      Game.Weather.maybe_display_periodic_weather(state)
+    rescue
+      error ->
+        Logger.error(
+          fn ->
+            "Error in heartbeat weather processing: #{inspect(error)}\n#{inspect(System.stacktrace())}"
+          end,
+          type: :session
+        )
+        state
+    end
+
+    self() |> schedule_heartbeat()
+    {:noreply, new_state}
   end
 
   def handle_info(:heartbeat, state) do

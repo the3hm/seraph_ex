@@ -2,6 +2,7 @@ defmodule Web.LayoutView do
   use Web, :view
 
   alias Data.User
+  alias Web.Router.Helpers, as: Routes
   alias Game.Config
   alias Web.Bug
   alias Web.Color

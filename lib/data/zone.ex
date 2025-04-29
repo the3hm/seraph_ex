@@ -8,6 +8,7 @@ defmodule Data.Zone do
   alias Data.Exit
   alias Data.NPCSpawner
   alias Data.Room
+  alias Data.Weather
   alias Data.Zone.MapCell
 
   @types ["rooms", "overworld"]
@@ -27,6 +28,7 @@ defmodule Data.Zone do
     has_many(:npc_spawners, NPCSpawner)
 
     belongs_to(:graveyard, Room)
+    belongs_to(:weather, Weather)
 
     timestamps()
   end
@@ -42,7 +44,8 @@ defmodule Data.Zone do
       :graveyard_id,
       :starting_level,
       :ending_level,
-      :map_layer_names
+      :map_layer_names,
+      :weather_id
     ])
     |> validate_required([:type, :name, :description, :map_layer_names])
     |> validate_inclusion(:type, @types)

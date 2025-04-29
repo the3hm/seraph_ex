@@ -30,6 +30,7 @@ defmodule Game.Session.State do
   - `:continuous_effects` - Continuous effects that the user has, list
   - `:create` - storage for creating a character
   - `:login` - storage for logging in
+  - `:last_weather_update` - Timestamp of the last weather update
   """
   @enforce_keys [:socket, :state, :mode]
   defstruct [
@@ -51,6 +52,7 @@ defmodule Game.Session.State do
     :is_afk,
     :create,
     :login,
+    :last_weather_update,
     mode: "comands",
     continuous_effects: [],
     stats: %SessionStats{}

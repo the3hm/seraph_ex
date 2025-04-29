@@ -349,7 +349,17 @@ defmodule Networking.Protocol do
         {:noreply, state}
 
       count ->
-        delay = round(:math.pow(2, count) * 100)
+        # Use exponential backoff but with a max delay
+        # The delay calculation: 2^count * 100, max 3 seconds
+        delay = min(round(:math.pow(2, count) * 100), 3000)
+
+        Logger.info(
+          fn ->
+            "Attempting session recovery - attempt #{count + 1} with delay #{delay}ms"
+          end,
+          type: :session
+        )
+
         :erlang.send_after(delay, self(), :restart_session)
         :erlang.send_after(delay + 1_00, self(), {:mark_session_alive, count})
         {:noreply, state}

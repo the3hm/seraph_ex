@@ -262,6 +262,8 @@ defmodule Web.Router do
       post("/cheat/activate", UserController, :cheating, as: :cheating)
     end
 
+    resources("/weather", WeatherController)
+
     resources "/zones", ZoneController, only: [:index, :show, :new, :create, :edit, :update] do
       resources("/rooms", RoomController, only: [:new, :create])
     end

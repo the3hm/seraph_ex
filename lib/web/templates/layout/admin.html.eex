@@ -170,6 +170,12 @@
                 <span>Zones</span>
               <% end %>
             </li>
+            <li class="<%= tab_selected(@conn, "weather") %>">
+              <%= link(to: weather_path(@conn, :index)) do %>
+                <i class="fa fa-cloud"></i>
+                <span>Weather</span>
+              <% end %>
+            </li>
             <li class="header">THE GAME</li>
             <li class="<%= tab_selected(@conn, "announcements") %>">
               <%= link(to: announcement_path(@conn, :index)) do %>

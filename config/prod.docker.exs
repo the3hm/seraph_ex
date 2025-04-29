@@ -6,8 +6,8 @@ config :ex_venture, Data.Repo,
   adapter: Ecto.Adapters.Postgres,
   database: "ex_venture",
   hostname: "postgres",
-  username: "ex_venture",
-  password: "ex_venture",
+  username: "postgres",
+  password: "postgres",
   pool_size: 10
 
 config :ex_venture, Web.Endpoint,

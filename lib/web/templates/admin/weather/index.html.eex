@@ -1,0 +1,52 @@
+<section class="content-header">
+  <h1>
+    Weather
+  </h1>
+
+  <ol class="breadcrumb">
+    <li><%= link("Home", to: dashboard_path(@conn, :index)) %></li>
+    <li class="active">Weather</li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <div class="box-tools">
+            <%= link("New Weather", to: weather_path(@conn, :new), class: "btn btn-primary") %>
+          </div>
+        </div>
+        <div class="box-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Valid Ecologies</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= Enum.map @weather_types, fn weather -> %>
+                <tr>
+                  <td><%= weather.id %></td>
+                  <td><%= weather.name %></td>
+                  <td><%= weather.description %></td>
+                  <td><%= Enum.join(weather.valid_ecologies, ", ") %></td>
+                  <td>
+                    <%= link("View", to: weather_path(@conn, :show, weather.id), class: "btn btn-default btn-xs") %>
+                    <%= link("Edit", to: weather_path(@conn, :edit, weather.id), class: "btn btn-default btn-xs") %>
+                    <%= link("Delete", to: weather_path(@conn, :delete, weather.id), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs") %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

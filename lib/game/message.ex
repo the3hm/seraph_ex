@@ -10,7 +10,7 @@ defmodule Game.Message do
   alias Game.Format.Channels, as: FormatChannels
 
   @type t :: %{
-          type: :player | :npc,
+          type: :player | :npc | :system,
           sender: User.t(),
           message: String.t(),
           formatted: String.t()
@@ -131,6 +131,18 @@ defmodule Game.Message do
       sender: npc,
       message: message,
       formatted: FormatChannels.tell(npc, message)
+    }
+  end
+
+  @doc """
+  Create a system message
+  """
+  def system(sender, message) do
+    %__MODULE__{
+      type: :system,
+      sender: sender,
+      message: message,
+      formatted: message
     }
   end
 

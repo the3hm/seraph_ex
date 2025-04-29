@@ -219,10 +219,15 @@ defmodule Game.Session.Login do
   end
 
   defp setup_state_after_login(state, user, character) do
+    now = Timex.now()
+
+    # Clear out any old state fields to ensure a clean recovery
     state
     |> Map.put(:user, user)
     |> Map.put(:character, character)
     |> Map.put(:save, character.save)
+    |> Map.put(:last_weather_update, now)
+    |> Map.put(:last_recv, now) # Ensure last_recv is updated to avoid early AFK
   end
 
   defp check_already_signed_in(character) do

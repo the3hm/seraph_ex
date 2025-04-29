@@ -84,6 +84,23 @@ defmodule Game.Channel do
   end
 
   @doc """
+  Tell a formatted message directly to a character
+
+  Used for system messages like weather
+  """
+  @spec tell_character(Character.t(), String.t()) :: :ok
+  def tell_character(character, formatted_message) do
+    # Create a simple system character as the sender
+    from = %Game.Character.Simple{type: "system", name: "System"}
+
+    # Create a message struct with the formatted message
+    message = Message.system(from, formatted_message)
+
+    # Use the existing tell function
+    tell(character, from, message)
+  end
+
+  @doc """
   List out the subscribed channels
 
   The current process PID will be used

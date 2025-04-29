@@ -1,0 +1,86 @@
+<section class="content-header">
+  <h1>
+    Weather - <%= @weather.name %>
+  </h1>
+
+  <ol class="breadcrumb">
+    <li><%= link("Home", to: dashboard_path(@conn, :index)) %></li>
+    <li><%= link("Weather", to: weather_path(@conn, :index)) %></li>
+    <li class="active"><%= @weather.name %></li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Weather Details</h3>
+          <div class="box-tools">
+            <%= link("Edit", to: weather_path(@conn, :edit, @weather.id), class: "btn btn-primary") %>
+          </div>
+        </div>
+        <div class="box-body">
+          <table class="table">
+            <tr>
+              <th>Name</th>
+              <td><%= @weather.name %></td>
+            </tr>
+            <tr>
+              <th>Description</th>
+              <td><%= @weather.description %></td>
+            </tr>
+            <tr>
+              <th>Valid Ecologies</th>
+              <td><%= Enum.join(@weather.valid_ecologies, ", ") %></td>
+            </tr>
+          </table>
+
+          <h3>Ecology-specific Descriptions</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Ecology</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= Enum.map @weather.valid_ecologies, fn ecology -> %>
+                <tr>
+                  <td><%= ecology %></td>
+                  <td><%= get_in(@weather.ecology_descriptions, [ecology]) || @weather.description %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+
+          <h3>Zones Using this Weather</h3>
+          <%= if Enum.empty?(@zones) do %>
+            <p>No zones are currently using this weather type.</p>
+          <% else %>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= Enum.map @zones, fn zone -> %>
+                  <tr>
+                    <td><%= zone.id %></td>
+                    <td><%= zone.name %></td>
+                    <td>
+                      <%= link("View", to: zone_path(@conn, :show, zone.id), class: "btn btn-default btn-xs") %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

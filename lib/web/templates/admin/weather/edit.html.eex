@@ -1,0 +1,25 @@
+<section class="content-header">
+  <h1>
+    Edit Weather - <%= @weather.name %>
+  </h1>
+
+  <ol class="breadcrumb">
+    <li><%= link("Home", to: dashboard_path(@conn, :index)) %></li>
+    <li><%= link("Weather", to: weather_path(@conn, :index)) %></li>
+    <li><%= link(@weather.name, to: weather_path(@conn, :show, @weather.id)) %></li>
+    <li class="active">Edit</li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="box box-primary">
+        <div class="box-header">
+          <h3 class="box-title">Edit Weather</h3>
+        </div>
+        <%= render "_form.html", changeset: @changeset, action: weather_path(@conn, :update, @weather.id), conn: @conn %>
+      </div>
+    </div>
+  </div>
+</section>

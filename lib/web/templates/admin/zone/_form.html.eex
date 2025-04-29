@@ -33,6 +33,15 @@
 
       <%= FormView.number_field(f, :ending_level) %>
 
+      <div class="form-group">
+        <%= label f, :weather_id, class: "col-md-4" %>
+        <div class="col-md-8">
+          <%= select f, :weather_id, Web.Weather.select_options(), prompt: "Select weather type", class: "form-control" %>
+          <%= error_tag f, :weather_id %>
+          <span class="help-block">Select the weather type for this zone</span>
+        </div>
+      </div>
+
       <%= if @edit_name_layers do %>
         <%= Enum.map(layers(@zone), fn (layer) -> %>
           <div class="form-group">

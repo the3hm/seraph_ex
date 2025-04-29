@@ -310,6 +310,8 @@ defmodule Game.Session.GMCP do
 
   def character_info(npc = %{type: "npc"}), do: npc_info(npc)
 
+  def character_info(system = %{type: "system"}), do: system_info(system)
+
   def character_info(%{type: "gossip", name: player_name}), do: gossip_info(player_name)
 
   @doc """
@@ -331,6 +333,17 @@ defmodule Game.Session.GMCP do
       type: :npc,
       id: npc.id,
       name: npc.name
+    }
+  end
+
+  @doc """
+  Gather information for a system message
+  """
+  def system_info(system) do
+    %{
+      type: :system,
+      id: Map.get(system, :id, nil),
+      name: system.name
     }
   end
 

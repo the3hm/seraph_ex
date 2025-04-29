@@ -57,7 +57,7 @@ defmodule Web.Zone do
     zone =
       Zone
       |> where([z], z.id == ^id)
-      |> preload([:graveyard])
+      |> preload([:graveyard, :weather])
       |> preload(rooms: ^from(r in Room, order_by: r.id))
       |> Repo.one()
 
@@ -81,6 +81,16 @@ defmodule Web.Zone do
   """
   @spec edit(zone :: Zone.t()) :: changeset :: map
   def edit(zone), do: zone |> Zone.changeset(%{})
+
+  @doc """
+  Get all zones that use a specific weather type
+  """
+  def by_weather(weather_id) do
+    Zone
+    |> where([z], z.weather_id == ^weather_id)
+    |> order_by([z], z.name)
+    |> Repo.all()
+  end
 
   @doc """
   Create a zone

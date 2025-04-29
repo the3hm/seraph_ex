@@ -65,6 +65,16 @@
               <th>Ending Level</th>
               <td><%= @zone.ending_level %></td>
             </tr>
+            <tr>
+              <th>Weather</th>
+              <td>
+                <%= if @zone.weather != nil do %>
+                  <%= link(@zone.weather.name, to: weather_path(@conn, :show, @zone.weather.id)) %>
+                <% else %>
+                  No weather is set.
+                <% end %>
+              </td>
+            </tr>
           </table>
         </div>
       </div>

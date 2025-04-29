@@ -248,6 +248,9 @@ defmodule Game.Command.Move do
       Environment.unlink(save.room_id)
       Environment.leave(save.room_id, character, leave_reason)
 
+      {:ok, new_room} = Environment.look(room_id)
+      state = Game.Weather.maybe_display_weather(state, new_room)
+
       clear_target(state)
 
       save = %{save | room_id: room_id}
@@ -260,6 +263,7 @@ defmodule Game.Command.Move do
         |> Map.put(:target, nil)
         |> Map.put(:is_targeting, MapSet.new())
         |> Map.put(:is_afk, false)
+        |> Map.put(:last_weather_update, Timex.now())
 
       Environment.enter(room_id, character, enter_reason)
       Environment.link(room_id)
