@@ -1,4 +1,26 @@
+// Variables
+$dracula-bg: #282a36;
+$dracula-current-line: #44475a;
+$dracula-foreground: #f8f8f2;
+$dracula-comment: #6272a4;
+$dracula-cyan: #8be9fd;
+$dracula-green: #50fa7b;
+$dracula-orange: #ffb86c;
+$dracula-pink: #ff79c6;
+$dracula-purple: #bd93f9;
+$dracula-red: #ff5555;
+$dracula-yellow: #f1fa8c;
 
+// Override Bootstrap variables
+$body-bg: $dracula-bg;
+$body-color: $dracula-foreground;
+$primary: $dracula-purple;
+$success: $dracula-green;
+$danger: $dracula-red;
+$info: $dracula-cyan;
+$warning: $dracula-orange;
+
+// Import external dependencies
 $fa-font-path: '~font-awesome/fonts';
 $bootstrap-sass-asset-helper: "~bootstrap-sass/assets/fonts/bootstrap/";
 
@@ -11,6 +33,259 @@ $bootstrap-sass-asset-helper: "~bootstrap-sass/assets/fonts/bootstrap/";
 @import "npcs";
 @import "world_map";
 
+// Material Dracula Theme Overrides
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: $dracula-bg;
+  color: $dracula-foreground;
+}
+
+.info-box {
+  display: block;
+  min-height: 90px;
+  background: $dracula-current-line;
+}
+
+.list-group-item {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  margin-bottom: -1px;
+  background-color: $dracula-current-line;
+  border: 1px solid $dracula-comment;
+}
+
+a {
+  color: $dracula-cyan;
+}
+
+.skin-black .wrapper, .skin-black .main-sidebar, .skin-black .left-side {
+  background-color: $dracula-bg;
+}
+
+.sidebar {
+  border-right: 4px solid rgba(0, 0, 0, 0.4);
+}
+
+.box-footer {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-top: 1px solid $dracula-comment;
+  padding: 10px;
+  background-color: $dracula-bg;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+  border-top: 1px solid $dracula-comment;
+}
+
+.btn-default {
+  background-color: $dracula-current-line;
+  color: $dracula-foreground;
+  border-color: $dracula-comment;
+}
+
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
+  color: $dracula-comment;
+  cursor: not-allowed;
+  background-color: $dracula-current-line;
+  border-color: $dracula-comment;
+}
+
+.bg-aqua, .callout.callout-info, .alert-info, .modal-info .modal-body {
+  background-color: $dracula-purple !important;
+}
+
+.label-info {
+  background-color: #785d9f !important;
+}
+
+.skin-black .main-header .navbar {
+  background-color: $dracula-current-line;
+}
+
+.main-footer {
+  background: $dracula-bg;
+  padding: 15px;
+  color: $dracula-foreground;
+  border-top: 1px solid $dracula-comment;
+}
+
+.skin-black .main-header .logo {
+  background-color: $dracula-current-line;
+  color: $dracula-foreground;
+  border-bottom: 0 solid transparent;
+  border-right: 1px solid $dracula-comment;
+}
+
+.skin-black .main-header .navbar > .sidebar-toggle {
+  color: $dracula-foreground;
+  border-right: 1px solid $dracula-comment;
+}
+
+.skin-black .main-header .navbar .navbar-custom-menu .navbar-nav > li > a, .skin-black .main-header .navbar .navbar-right > li > a {
+  border-left: 1px solid $dracula-comment;
+  border-right-width: 0;
+}
+.skin-black .main-header .navbar .navbar-nav > li > a {
+  border-right: 1px solid $dracula-comment;
+    border-right-width: 1px;
+}
+.skin-black .main-header .navbar .nav > li > a {
+  color: $dracula-foreground;
+}
+
+.content-header > .breadcrumb > li > a {
+  color: $dracula-foreground;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.breadcrumb > .active {
+  color: $dracula-comment;
+}
+
+.skin-black .main-header .logo:hover {
+  background-color: $dracula-current-line;
+}
+
+
+
+.content-wrapper,
+.right-side {
+  background-color: $dracula-bg;
+}
+
+.box {
+  background-color: $dracula-current-line;
+  border-top: 3px solid $dracula-purple;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.box-header {
+  color: $dracula-foreground;
+}
+
+.table {
+  color: $dracula-foreground;
+
+  > thead > tr > th {
+    background-color: $dracula-comment;
+    color: $dracula-cyan;
+    border-bottom: 2px solid $dracula-purple;
+  }
+
+  > tbody > tr {
+    background-color: $dracula-current-line;
+
+    &:hover {
+      background-color: $dracula-comment;
+    }
+  }
+}
+
+hr {
+  border-top: 1px solid rgba(0,0,0,.2);
+}
+
+.form-control {
+  background-color: rgba(0,0,0,.2);
+  border: 1px solid $dracula-comment;
+  color: $dracula-foreground;
+
+  &:focus {
+    border-color: $dracula-cyan;
+    box-shadow: 0 0 0 0.2rem rgba(139, 233, 253, 0.25);
+  }
+}
+
+.help-block {
+  color: $dracula-foreground;
+}
+.box {
+  border-right: 4px solid rgba(0,0,0,.2);
+  border-bottom: 6px solid rgba(0,0,0,.4);
+}
+
+.btn-primary {
+  background-color: $dracula-purple;
+  border-color: $dracula-purple;
+  color: $dracula-bg;
+  border-bottom: 4px solid rgba(0,0,0,.4);
+  border-right: 2px solid rgba(0,0,0,.3);
+
+  &:hover, &:focus {
+    background-color: darken($dracula-purple, 10%);
+    border-color: darken($dracula-purple, 10%);
+  }
+}
+
+.btn-success {
+  background-color: $dracula-green;
+  border-color: $dracula-green;
+  color: $dracula-bg;
+
+  &:hover, &:focus {
+    background-color: darken($dracula-green, 10%);
+    border-color: darken($dracula-green, 10%);
+  }
+}
+
+.btn-danger {
+  background-color: $dracula-red;
+  border-color: $dracula-red;
+
+  &:hover, &:focus {
+    background-color: darken($dracula-red, 10%);
+    border-color: darken($dracula-red, 10%);
+  }
+}
+
+.alert-success {
+  background-color: $dracula-green;
+  border-color: darken($dracula-green, 10%);
+  color: $dracula-bg;
+}
+
+.alert-danger {
+  background-color: $dracula-red;
+  border-color: darken($dracula-red, 10%);
+  color: $dracula-foreground;
+}
+
+.alert-info {
+  background-color: $dracula-cyan;
+  border-color: darken($dracula-cyan, 10%);
+  color: $dracula-bg;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid $dracula-comment;
+
+  > li > a {
+    color: $dracula-foreground;
+
+    &:hover {
+      background-color: $dracula-current-line;
+      border-color: $dracula-comment;
+    }
+  }
+
+  > li.active > a {
+    background-color: $dracula-current-line;
+    border-color: $dracula-comment;
+    color: $dracula-cyan;
+
+    &:hover {
+      background-color: $dracula-current-line;
+      border-color: $dracula-comment;
+    }
+  }
+}
+
+// Existing custom styles
 .map span.empty {
   display: block;
   height: 34px;
@@ -20,10 +295,24 @@ $bootstrap-sass-asset-helper: "~bootstrap-sass/assets/fonts/bootstrap/";
   cursor: default;
 }
 
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857;
+  color: $dracula-green;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: rgba(0,0,0,.4);
+  border: 1px solid $dracula-comment;
+  border-radius: 4px;
+}
+
 .announcement pre,
 .console {
   margin: 0;
-  font-family: "Open Sans", Monaco, monospace;
+  font-family: "Roboto Mono", Monaco, monospace;
   font-size: 1.1em;
 
   a {
@@ -34,6 +323,5 @@ $bootstrap-sass-asset-helper: "~bootstrap-sass/assets/fonts/bootstrap/";
 .color-preview {
   width: 30px;
   height: 30px;
-
-  border: 2px solid black;
+  border: 2px solid $dracula-comment;
 }

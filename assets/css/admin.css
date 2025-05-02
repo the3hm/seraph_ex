@@ -1,0 +1,202 @@
+/* Material Dracula UI Theme for Admin Panel */
+
+:root {
+  --dracula-bg: #282a36;
+  --dracula-current-line: #44475a;
+  --dracula-foreground: #f8f8f2;
+  --dracula-comment: #6272a4;
+  --dracula-cyan: #8be9fd;
+  --dracula-green: #50fa7b;
+  --dracula-orange: #ffb86c;
+  --dracula-pink: #ff79c6;
+  --dracula-purple: #bd93f9;
+  --dracula-red: #ff5555;
+  --dracula-yellow: #f1fa8c;
+}
+
+/* Base Styles */
+body {
+  background-color: var(--dracula-bg);
+  color: var(--dracula-foreground);
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--dracula-current-line) !important;
+  border-bottom: 2px solid var(--dracula-purple);
+}
+
+.navbar-brand {
+  color: var(--dracula-cyan) !important;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: var(--dracula-foreground) !important;
+}
+
+.nav-link:hover {
+  color: var(--dracula-cyan) !important;
+}
+
+/* Cards */
+.card {
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-comment);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: var(--dracula-comment);
+  color: var(--dracula-foreground);
+  border-bottom: 1px solid var(--dracula-purple);
+}
+
+.card-footer {
+  background-color: var(--dracula-comment);
+  color: var(--dracula-foreground);
+  border-top: 1px solid var(--dracula-purple);
+  padding: 1rem;
+}
+
+/* Tables */
+.table {
+  color: var(--dracula-foreground);
+}
+
+.table thead th {
+  background-color: var(--dracula-comment);
+  color: var(--dracula-cyan);
+  border-bottom: 2px solid var(--dracula-purple);
+}
+
+.table tbody tr {
+  background-color: var(--dracula-current-line);
+}
+
+.table tbody tr td {
+  border-top: 1px solid var(--dracula-comment);
+}
+
+.table tbody tr:hover {
+  background-color: var(--dracula-comment);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--dracula-purple);
+  border-color: var(--dracula-purple);
+  color: var(--dracula-bg);
+}
+
+.btn-primary:hover {
+  background-color: var(--dracula-cyan);
+  border-color: var(--dracula-cyan);
+}
+
+.btn-danger {
+  background-color: var(--dracula-red);
+  border-color: var(--dracula-red);
+}
+
+.btn-success {
+  background-color: var(--dracula-green);
+  border-color: var(--dracula-green);
+  color: var(--dracula-bg);
+}
+
+/* Forms */
+.form-control {
+  background-color: var(--dracula-current-line);
+  border: 1px solid var(--dracula-comment);
+  color: var(--dracula-foreground);
+}
+
+.form-control:focus {
+  background-color: var(--dracula-current-line);
+  border-color: var(--dracula-cyan);
+  color: var(--dracula-foreground);
+  box-shadow: 0 0 0 0.2rem rgba(139, 233, 253, 0.25);
+}
+
+/* Alerts */
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+.alert-primary {
+  background-color: var(--dracula-cyan);
+  color: var(--dracula-bg);
+}
+
+.alert-danger {
+  background-color: var(--dracula-red);
+  color: var(--dracula-foreground);
+}
+
+.alert-success {
+  background-color: var(--dracula-green);
+  color: var(--dracula-bg);
+}
+
+/* Links */
+a {
+  color: var(--dracula-cyan);
+}
+
+a:hover {
+  color: var(--dracula-purple);
+  text-decoration: none;
+}
+
+/* Pagination */
+.pagination .page-link {
+  background-color: var(--dracula-current-line);
+  border-color: var(--dracula-comment);
+  color: var(--dracula-foreground);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--dracula-purple);
+  border-color: var(--dracula-purple);
+}
+
+/* Badges */
+.badge {
+  border-radius: 4px;
+}
+
+.badge-primary {
+  background-color: var(--dracula-purple);
+}
+
+.badge-success {
+  background-color: var(--dracula-green);
+  color: var(--dracula-bg);
+}
+
+.badge-danger {
+  background-color: var(--dracula-red);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dracula-current-line);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dracula-comment);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dracula-purple);
+} 
+

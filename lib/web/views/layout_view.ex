@@ -12,6 +12,13 @@ defmodule Web.LayoutView do
     Map.has_key?(conn.assigns, :current_character)
   end
 
+  def admin_section?(conn) do
+    case conn.path_info do
+      ["admin" | _] -> true
+      _ -> false
+    end
+  end
+
   def color_css_path(conn, opts \\ []) do
     opts = Keyword.put(opts, :version, Color.latest_version())
     public_color_path(conn, :index, opts)
