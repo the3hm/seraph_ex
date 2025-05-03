@@ -5,6 +5,7 @@ import "phoenix_html"
 
 import "./socket.js"
 import "./npcs.js"
+import "./sidebar_toggle.js"
 
 import Effects from "./effects.jsx"
 import ExitProficiencies from "./exit_proficiencies.jsx";

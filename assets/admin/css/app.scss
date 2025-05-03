@@ -10,6 +10,7 @@ $dracula-pink: #ff79c6;
 $dracula-purple: #bd93f9;
 $dracula-red: #ff5555;
 $dracula-yellow: #f1fa8c;
+$dracula-bg-dark: #1e1e2e;
 
 // Override Bootstrap variables
 $body-bg: $dracula-bg;
@@ -106,6 +107,11 @@ a {
   background-color: $dracula-current-line;
 }
 
+.skin-black .sidebar-menu > li.header {
+  color: $dracula-foreground;
+  background: $dracula-current-line !important;
+}
+
 .main-footer {
   background: $dracula-bg;
   padding: 15px;
@@ -155,7 +161,7 @@ a {
 
 .content-wrapper,
 .right-side {
-  background-color: $dracula-bg;
+  background-color: $dracula-bg-dark;
 }
 
 .box {
@@ -324,4 +330,81 @@ pre {
   width: 30px;
   height: 30px;
   border: 2px solid $dracula-comment;
+}
+
+// Sidebar toggle styles
+.sidebar-menu {
+  li.header {
+    cursor: pointer;
+    padding: 10px 25px 10px 15px;
+    font-size: 12px;
+    color: $dracula-foreground;
+    background: $dracula-current-line;
+    border-bottom: 1px solid $dracula-comment;
+    transition: background-color 0.3s ease;
+    position: relative;
+    
+    &:hover {
+      background-color: darken($dracula-current-line, 5%);
+    }
+    
+    .pull-right-container {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      
+      i {
+        transition: transform 0.3s ease;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  li > a {
+    transition: padding-left 0.3s ease;
+  }
+}
+
+// Top navigation buttons
+.top-nav-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: $dracula-current-line;
+  border-bottom: 1px solid $dracula-comment;
+  
+  .nav-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    color: $dracula-foreground;
+    background: $dracula-bg;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: 1px solid $dracula-comment;
+    
+    &:hover {
+      background: $dracula-purple;
+      color: $dracula-bg;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    &.active {
+      background: $dracula-purple;
+      color: $dracula-bg;
+      border-color: $dracula-purple;
+    }
+    
+    i {
+      font-size: 18px;
+    }
+  }
 }

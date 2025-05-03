@@ -63,31 +63,21 @@
 
       <aside class="main-sidebar">
         <section class="sidebar">
+          <div class="top-nav-buttons">
+            <%= link(to: dashboard_path(@conn, :index), class: "nav-icon-btn #{tab_selected(@conn, 'dashboard')}") do %>
+              <i class="fa fa-dashboard"></i>
+            <% end %>
+            <%= link(to: public_page_path(@conn, :index), class: "nav-icon-btn", target: "_blank") do %>
+              <i class="fa fa-home"></i>
+            <% end %>
+            <%= link(to: public_play_path(@conn, :show), class: "nav-icon-btn", target: "_blank") do %>
+              <i class="fa fa-gamepad"></i>
+            <% end %>
+            <%= link(to: note_path(@conn, :index), class: "nav-icon-btn #{tab_selected(@conn, 'notes')}") do %>
+              <i class="fa fa-book"></i>
+            <% end %>
+          </div>
           <ul class="sidebar-menu" data-widget="tree">
-            <li class="<%= tab_selected(@conn, "dashboard") %>">
-              <%= link(to: dashboard_path(@conn, :index)) do %>
-                <i class="fa fa-dashboard"></i>
-                <span>Dashboard</span>
-              <% end %>
-            </li>
-            <li>
-              <%= link(to: public_page_path(@conn, :index), target: "_blank") do %>
-                <i class="fa fa-home"></i>
-                <span>Home Page &raquo;</span>
-              <% end %>
-            </li>
-            <li>
-              <%= link(to: public_play_path(@conn, :show), target: "_blank") do %>
-                <i class="fa fa-gamepad"></i>
-                <span>Play Now &raquo;</span>
-              <% end %>
-            </li>
-            <li class="<%= tab_selected(@conn, "notes") %>">
-              <%= link(to: note_path(@conn, :index)) do %>
-                <i class="fa fa-book"></i>
-                <span>Notes</span>
-              <% end %>
-            </li>
             <li class="header">PLAYERS</li>
             <li class="<%= tab_selected(@conn, "characters") %>">
               <%= link(to: character_path(@conn, :index)) do %>
