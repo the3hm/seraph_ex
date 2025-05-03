@@ -34,6 +34,14 @@
 - Managed with npm/yarn
 - Webpack for bundling
 
+## Editor Technology
+- CKEditor 4.11.1 (free version)
+- Loaded via CDN
+- Used for rich text editing in forms
+- No API key required
+- Security warning suppressed via CSS
+- Default configuration used
+
 ## Development Setup
 ```bash
 # Initial setup

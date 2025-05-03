@@ -17,3 +17,9 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    CKEDITOR.replace('note_body');
+  });
+</script>

@@ -369,6 +369,18 @@ pre {
   }
 }
 
+.box-header.with-border {
+  border-bottom: 1px solid $dracula-comment;
+}
+
+.cke_notification_warning {
+  display: none !important;
+}
+
+.breadcrumb > .active {
+  color: $dracula-foreground;
+}
+
 // Top navigation buttons
 .top-nav-buttons {
   display: flex;
@@ -405,6 +417,24 @@ pre {
     
     i {
       font-size: 18px;
+    }
+  }
+}
+
+// Hide all but dashboard icon when sidebar is collapsed
+.sidebar-collapse {
+  .top-nav-buttons {
+    justify-content: center;
+    
+    .nav-icon-btn {
+      &:not(:first-child) {
+        display: none;
+      }
+      
+      &:first-child {
+        width: 100%;
+        max-width: 40px;
+      }
     }
   }
 }

@@ -42,6 +42,10 @@
   - Updated WeatherController to use `Web.AdminController` instead of `Web, :controller`
   - This restricts weather pages to authenticated admin users only
   - Ensures weather management appears only in the admin panel, not public site
+- Reverted from TinyMCE back to CKEditor 4.11.1
+- Added CKEditor to both announcement and note forms
+- Hidden security warning via CSS
+- Kept implementation simple and consistent across forms
 
 ## Current Priorities
 
@@ -102,3 +106,10 @@
 3. Update activeContext.md as focus shifts
 4. Document new patterns as they emerge
 5. Test and verify weather feature functionality
+
+## Editor Implementation
+- Using CKEditor 4.11.1 (free version) for rich text editing
+- Implemented in announcement and note forms
+- Security warning is hidden via CSS
+- Editor is initialized with default configuration
+- No custom styling applied to maintain consistency with system theme

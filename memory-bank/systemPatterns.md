@@ -74,6 +74,14 @@ Commands are distributed across multiple files following a consistent pattern:
 - Integration tests for web interfaces
 - Cluster behavior testing
 
+## Editor Pattern
+- Rich text editing is handled by CKEditor 4.11.1
+- Editor is initialized on form textareas using `CKEDITOR.replace()`
+- Initialization is wrapped in `DOMContentLoaded` event listener
+- Security warnings are suppressed via CSS
+- Implementation is kept simple with default configuration
+- Used in announcement and note forms for content editing
+
 ## Core Architectural Principles
 1. **Modularity**: Clear separation of concerns across directories
 2. **Resilience**: Fault isolation and recovery
