@@ -272,6 +272,8 @@ defmodule Web.Router do
     post("/zones/:id/overworld/exits", ZoneOverworldController, :create_exit)
     delete("/zones/:id/overworld/exits/:exit_id", ZoneOverworldController, :delete_exit)
     put("/zones/:id/overworld", ZoneOverworldController, :update)
+
+    get "/search", SearchController, :search
   end
 
   if Mix.env() == :dev do

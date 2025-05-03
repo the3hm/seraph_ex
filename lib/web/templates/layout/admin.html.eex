@@ -12,7 +12,9 @@
     <title><%= Config.game_name() %> Admin</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/admin.css") %>">
     <link rel="stylesheet" href="<%= color_css_path(@conn) %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/search.css") %>">
     <script src="<%= static_path(@conn, "/js/admin.js") %>"></script>
+    <script src="<%= static_path(@conn, "/js/admin-search.js") %>"></script>
     <script src="https://cdn.ckeditor.com/4.11.1/standard/ckeditor.js"></script>
   </head>
 
@@ -34,6 +36,17 @@
 
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+              <li class="dropdown notifications-menu">
+                <form class="navbar-form" role="search">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="admin-search" placeholder="Search..." autocomplete="off">
+                    <div class="search-results dropdown-menu">
+                      <ul class="list-unstyled">
+                      </ul>
+                    </div>
+                  </div>
+                </form>
+              </li>
               <li class="dropdown notifications-menu">
                 <%= if Map.has_key?(assigns, :current_character) do %>
                   <%= link(@current_character.name, to: "#", class: "dropdown-toggle", data: [toggle: "dropdown"]) %>
@@ -263,5 +276,15 @@
       <footer class="main-footer">
       </footer>
     </div>
+
+    <script>
+      window.addEventListener('load', function() {
+        const searchInput = document.getElementById('admin-search');
+        const searchResults = document.querySelector('.search-results');
+        if (searchInput && searchResults) {
+          initializeSearch(searchInput, searchResults);
+        }
+      });
+    </script>
   </body>
 </html>

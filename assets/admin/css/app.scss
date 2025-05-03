@@ -377,6 +377,27 @@ pre {
   display: none !important;
 }
 
+@media (max-width: 991px) {
+.content-header > .breadcrumb {
+  position: relative;
+  margin-top: 5px;
+  top: 0;
+  right: 0;
+  float: none;
+  background: $dracula-current-line;
+  padding-left: 10px;
+}
+}
+
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  font-weight: bold;
+  color: $dracula-pink;
+  background-color: $dracula-bg-dark;
+  border-radius: 4px;
+}
+
 .breadcrumb > .active {
   color: $dracula-foreground;
 }
