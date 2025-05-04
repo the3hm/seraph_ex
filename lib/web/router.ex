@@ -188,7 +188,9 @@ defmodule Web.Router do
 
       resources("/events", NPCEventController, except: [:show], as: :event)
 
-      resources("/items", NPCItemController, only: [:new, :create], as: :item)
+      resources("/items", NPCItemController, only: [:new, :create], as: :item) do
+        get("/search", NPCItemController, :search)
+      end
 
       get("/script", NPCScriptController, :show, as: :script)
       get("/script/edit", NPCScriptController, :edit, as: :script)
@@ -199,6 +201,7 @@ defmodule Web.Router do
       resources("/spawners", NPCSpawnerController, only: [:new, :create], as: :spawner)
     end
 
+    get("/npc_items/search", NPCItemController, :search)
     resources("/npc_items", NPCItemController, only: [:edit, :update, :delete])
 
     resources("/npc_spawners", NPCSpawnerController, only: [:show, :edit, :update, :delete])
@@ -273,7 +276,7 @@ defmodule Web.Router do
     delete("/zones/:id/overworld/exits/:exit_id", ZoneOverworldController, :delete_exit)
     put("/zones/:id/overworld", ZoneOverworldController, :update)
 
-    get "/search", SearchController, :search
+    get("/search", SearchController, :search)
   end
 
   if Mix.env() == :dev do

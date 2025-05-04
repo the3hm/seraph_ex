@@ -3,6 +3,30 @@ defmodule Web.Admin.NPCItemController do
 
   alias Web.Item
   alias Web.NPC
+  alias Data.Repo
+  import Ecto.Query
+  require Logger
+
+  def search(conn, %{"q" => query}) do
+    Logger.info("Searching for items: #{query}")
+
+    try do
+      items = from(i in Data.Item,
+        where: ilike(i.name, ^"%#{query}%"),
+        limit: 5
+      ) |> Repo.all()
+
+      results = Enum.map(items, &%{id: &1.id, name: &1.name})
+      json(conn, results)
+    rescue
+      e in Ecto.QueryError ->
+        Logger.error("Error searching items: #{inspect(e)}")
+        json(conn, %{error: "Error searching items"})
+      e ->
+        Logger.error("Unexpected error searching items: #{inspect(e)}")
+        json(conn, %{error: "Unexpected error searching items"})
+    end
+  end
 
   def new(conn, %{"npc_id" => npc_id}) do
     npc = NPC.get(npc_id)

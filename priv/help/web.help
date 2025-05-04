@@ -50,7 +50,7 @@ npc.events:
   NPCs interact with the world based on these definitions.
 
 npc.item_drop_rate:
-  Percent chance to drop on death, 1-100.
+  Percent chance to drop on death, 0.0001-100.
 
 npc.items:
   NPCs have a chance of dropping anything in this list when they are killed.
