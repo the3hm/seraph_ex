@@ -402,6 +402,45 @@ code {
   font-weight: bolder;
 }
 
+.nav-tabs-custom > .tab-content {
+  background: $dracula-bg;
+  padding: 10px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.nav-tabs-custom > .nav-tabs {
+  margin: 0;
+  border-bottom-color: $dracula-comment;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.nav-tabs-custom {
+  margin-bottom: 20px;
+  background: $dracula-current-line;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a {
+  border-top-color: transparent;
+  border-left-color: $dracula-comment;
+  border-right-color: $dracula-comment;
+}
+.nav-tabs-custom > .nav-tabs > li.active > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: $dracula-current-line;
+  color: $dracula-foreground;
+}.nav-tabs-custom > .nav-tabs > li.active > a {
+  border-top-color: transparent;
+  border-left-color: $dracula-comment;
+  border-right-color: $dracula-comment;
+}
+.nav-tabs-custom > .nav-tabs > li.active > a, .nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: $dracula-current-line;
+  color: $dracula-foreground;
+}
+
 .breadcrumb > .active {
   color: $dracula-foreground;
 }
