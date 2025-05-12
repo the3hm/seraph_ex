@@ -67,7 +67,8 @@ defmodule Data.Item.Compiled do
   @spec merge_effects(t(), Item.t()) :: t()
   def merge_effects(compiled_item, %{item_aspectings: item_aspectings}) do
     effects = Enum.flat_map(item_aspectings, &_scale_effects(&1, compiled_item.level))
-    %{compiled_item | effects: compiled_item.effects ++ effects}
+    base_effects = compiled_item.effects || []
+    %{compiled_item | effects: base_effects ++ effects}
   end
 
   defp _scale_effects(%{item_aspect: %{effects: effects}}, level) do
@@ -75,7 +76,12 @@ defmodule Data.Item.Compiled do
   end
 
   def _scale_effect(effect = %{kind: "damage"}, level) do
-    %{effect | amount: scale_for_level(level, effect.amount)}
+    case effect.amount do
+      %{base: base, variance: variance} ->
+        %{effect | amount: %{base: scale_for_level(level, base), variance: variance}}
+      amount ->
+        %{effect | amount: scale_for_level(level, amount)}
+    end
   end
 
   def _scale_effect(effect, _level), do: effect

@@ -1,3 +1,4 @@
+import "jquery"
 import "../css/app.scss"
 import "admin-lte"
 import "bootstrap"

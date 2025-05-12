@@ -33,13 +33,15 @@ class DamageEffect extends BaseEffect {
     this.state = {
       kind: "damage",
       type: effect.type,
-      amount: effect.amount,
+      amount: effect.amount && effect.amount.base !== undefined ? effect.amount.base : effect.amount,
+      variance: effect.amount && effect.amount.variance !== undefined ? effect.amount.variance : 0
     };
   }
 
   castField(field, value) {
     switch (field) {
       case "amount":
+      case "variance":
         return parseInt(value);
 
       default:
@@ -47,9 +49,28 @@ class DamageEffect extends BaseEffect {
     }
   }
 
+  handleUpdateField(field) {
+    return (event) => {
+      let value = event.target.value;
+      value = this.castField(field, value);
+      this.setState({[field]: value});
+
+      let effect = {
+        kind: "damage",
+        type: this.state.type,
+        amount: {
+          base: field === "amount" ? value : this.state.amount,
+          variance: field === "variance" ? value : this.state.variance
+        }
+      };
+      this.props.handleUpdate(effect);
+    }
+  }
+
   render() {
     let type = this.state.type;
     let amount = this.state.amount;
+    let variance = this.state.variance;
 
     return (
       <div className="form-group row">
@@ -62,8 +83,13 @@ class DamageEffect extends BaseEffect {
             </div>
 
             <div className="col-md-4">
-              <label>Amount</label>
+              <label>Base Amount</label>
               <input type="number" value={amount} className="form-control" onChange={this.handleUpdateField("amount")} />
+            </div>
+
+            <div className="col-md-4">
+              <label>Variance</label>
+              <input type="number" value={variance} className="form-control" onChange={this.handleUpdateField("variance")} />
             </div>
           </div>
         </div>
@@ -173,15 +199,17 @@ class DamageOverTimeEffect extends BaseEffect {
     this.state = {
       kind: "damage/over-time",
       type: effect.type,
-      amount: effect.amount,
-      every: effect.amount,
-      count: effect.amount,
+      amount: effect.amount && effect.amount.base !== undefined ? effect.amount.base : effect.amount,
+      variance: effect.amount && effect.amount.variance !== undefined ? effect.amount.variance : 0,
+      every: effect.every,
+      count: effect.count
     };
   }
 
   castField(field, value) {
     switch (field) {
       case "amount":
+      case "variance":
       case "every":
       case "count":
         return parseInt(value);
@@ -191,9 +219,30 @@ class DamageOverTimeEffect extends BaseEffect {
     }
   }
 
+  handleUpdateField(field) {
+    return (event) => {
+      let value = event.target.value;
+      value = this.castField(field, value);
+      this.setState({[field]: value});
+
+      let effect = {
+        kind: "damage/over-time",
+        type: this.state.type,
+        amount: {
+          base: field === "amount" ? value : this.state.amount,
+          variance: field === "variance" ? value : this.state.variance
+        },
+        every: this.state.every,
+        count: this.state.count
+      };
+      this.props.handleUpdate(effect);
+    }
+  }
+
   render() {
     let type = this.state.type;
     let amount = this.state.amount;
+    let variance = this.state.variance;
     let every = this.state.every;
     let count = this.state.count;
 
@@ -207,18 +256,22 @@ class DamageOverTimeEffect extends BaseEffect {
               <input type="text" value={type} className="form-control" onChange={this.handleUpdateField("type")} />
             </div>
             <div className="col-md-4">
-              <label>Amount</label>
-              <input type="text" value={amount} className="form-control" onChange={this.handleUpdateField("amount")} />
+              <label>Base Amount</label>
+              <input type="number" value={amount} className="form-control" onChange={this.handleUpdateField("amount")} />
+            </div>
+            <div className="col-md-4">
+              <label>Variance</label>
+              <input type="number" value={variance} className="form-control" onChange={this.handleUpdateField("variance")} />
             </div>
           </div>
           <div className="row">
             <div className="col-md-4">
               <label>Every X ms</label>
-              <input type="text" value={every} className="form-control" onChange={this.handleUpdateField("every")} />
+              <input type="number" value={every} className="form-control" onChange={this.handleUpdateField("every")} />
             </div>
             <div className="col-md-4">
               <label>Count</label>
-              <input type="text" value={count} className="form-control" onChange={this.handleUpdateField("count")} />
+              <input type="number" value={count} className="form-control" onChange={this.handleUpdateField("count")} />
             </div>
           </div>
         </div>
@@ -236,15 +289,17 @@ class RecoverOverTimeEffect extends BaseEffect {
     this.state = {
       kind: "recover/over-time",
       type: effect.type,
-      amount: effect.amount,
-      every: effect.amount,
-      count: effect.amount,
+      amount: effect.amount && effect.amount.base !== undefined ? effect.amount.base : effect.amount,
+      variance: effect.amount && effect.amount.variance !== undefined ? effect.amount.variance : 0,
+      every: effect.every,
+      count: effect.count
     };
   }
 
   castField(field, value) {
     switch (field) {
       case "amount":
+      case "variance":
       case "every":
       case "count":
         return parseInt(value);
@@ -254,9 +309,30 @@ class RecoverOverTimeEffect extends BaseEffect {
     }
   }
 
+  handleUpdateField(field) {
+    return (event) => {
+      let value = event.target.value;
+      value = this.castField(field, value);
+      this.setState({[field]: value});
+
+      let effect = {
+        kind: "recover/over-time",
+        type: this.state.type,
+        amount: {
+          base: field === "amount" ? value : this.state.amount,
+          variance: field === "variance" ? value : this.state.variance
+        },
+        every: this.state.every,
+        count: this.state.count
+      };
+      this.props.handleUpdate(effect);
+    }
+  }
+
   render() {
     let type = this.state.type;
     let amount = this.state.amount;
+    let variance = this.state.variance;
     let every = this.state.every;
     let count = this.state.count;
 
@@ -270,18 +346,22 @@ class RecoverOverTimeEffect extends BaseEffect {
               <input type="text" value={type} className="form-control" onChange={this.handleUpdateField("type")} />
             </div>
             <div className="col-md-4">
-              <label>Amount</label>
-              <input type="text" value={amount} className="form-control" onChange={this.handleUpdateField("amount")} />
+              <label>Base Amount</label>
+              <input type="number" value={amount} className="form-control" onChange={this.handleUpdateField("amount")} />
+            </div>
+            <div className="col-md-4">
+              <label>Variance</label>
+              <input type="number" value={variance} className="form-control" onChange={this.handleUpdateField("variance")} />
             </div>
           </div>
           <div className="row">
             <div className="col-md-4">
               <label>Every X ms</label>
-              <input type="text" value={every} className="form-control" onChange={this.handleUpdateField("every")} />
+              <input type="number" value={every} className="form-control" onChange={this.handleUpdateField("every")} />
             </div>
             <div className="col-md-4">
               <label>Count</label>
-              <input type="text" value={count} className="form-control" onChange={this.handleUpdateField("count")} />
+              <input type="number" value={count} className="form-control" onChange={this.handleUpdateField("count")} />
             </div>
           </div>
         </div>
@@ -299,13 +379,15 @@ class RecoverEffect extends BaseEffect {
     this.state = {
       kind: "recover",
       type: effect.type,
-      amount: effect.amount,
+      amount: effect.amount && effect.amount.base !== undefined ? effect.amount.base : effect.amount,
+      variance: effect.amount && effect.amount.variance !== undefined ? effect.amount.variance : 0
     };
   }
 
   castField(field, value) {
     switch (field) {
       case "amount":
+      case "variance":
         return parseInt(value);
 
       default:
@@ -313,9 +395,28 @@ class RecoverEffect extends BaseEffect {
     }
   }
 
+  handleUpdateField(field) {
+    return (event) => {
+      let value = event.target.value;
+      value = this.castField(field, value);
+      this.setState({[field]: value});
+
+      let effect = {
+        kind: "recover",
+        type: this.state.type,
+        amount: {
+          base: field === "amount" ? value : this.state.amount,
+          variance: field === "variance" ? value : this.state.variance
+        }
+      };
+      this.props.handleUpdate(effect);
+    }
+  }
+
   render() {
     let type = this.state.type;
     let amount = this.state.amount;
+    let variance = this.state.variance;
 
     return (
       <div className="form-group row">
@@ -328,8 +429,13 @@ class RecoverEffect extends BaseEffect {
             </div>
 
             <div className="col-md-4">
-              <label>Amount</label>
+              <label>Base Amount</label>
               <input type="number" value={amount} className="form-control" onChange={this.handleUpdateField("amount")} />
+            </div>
+
+            <div className="col-md-4">
+              <label>Variance</label>
+              <input type="number" value={variance} className="form-control" onChange={this.handleUpdateField("variance")} />
             </div>
           </div>
         </div>
@@ -449,7 +555,7 @@ class StatsBoostEffect extends BaseEffect {
           <div className="row">
             <div className="col-md-4">
               <label>Duration</label>
-              <input type="text" value={duration} className="form-control" onChange={this.handleUpdateField("duration")} />
+              <input type="number" value={duration} className="form-control" onChange={this.handleUpdateField("duration")} />
             </div>
 
             <div className="col-md-4">
@@ -476,6 +582,38 @@ class Effect extends React.Component {
   }
 
   handleUpdate(effect) {
+    // Convert amount to the new structure if needed
+    if (effect.amount !== undefined) {
+      if (typeof effect.amount === 'number') {
+        effect = {
+          ...effect,
+          amount: {
+            base: effect.amount,
+            variance: 0
+          }
+        };
+      } else if (typeof effect.amount === 'object') {
+        // If it's already in the new structure, keep it
+        if (effect.amount.base !== undefined) {
+          effect = {
+            ...effect,
+            amount: {
+              base: effect.amount.base,
+              variance: effect.amount.variance || 0
+            }
+          };
+        } else {
+          // Handle case where amount is an object but doesn't have base/variance structure
+          effect = {
+            ...effect,
+            amount: {
+              base: effect.amount.amount || effect.amount,  // Try to get amount property first, fallback to whole object
+              variance: effect.amount.variance || 0
+            }
+          };
+        }
+      }
+    }
     this.props.handleUpdate(effect, this.props.index);
   }
 
@@ -546,7 +684,10 @@ class AddEffect extends React.Component {
     this.props.addEffect({
       kind: "damage",
       type: "slashing",
-      amount: 10,
+      amount: {
+        base: 10,
+        variance: 0
+      }
     });
   }
 

@@ -35,20 +35,15 @@ defmodule Data.Stats do
 
   @impl Ecto.Type
   def load(stats) do
-    stats = for {key, val} <- stats, into: %{}, do: {String.to_atom(key), val}
-    stats = Enum.into(stats, %{}, &cast_val/1)
-    {:ok, stats}
+    {:ok, convert_keys_to_atoms(stats)}
   end
 
-  defp cast_val({key, val}) do
-    case key do
-      :slot ->
-        {key, String.to_atom(val)}
-
-      _ ->
-        {key, val}
-    end
+  defp convert_keys_to_atoms(map) when is_map(map) do
+    Map.new(map, fn {key, val} ->
+      {String.to_atom(key), convert_keys_to_atoms(val)}
+    end)
   end
+  defp convert_keys_to_atoms(val), do: val
 
   @impl Ecto.Type
   def dump(stats) when is_map(stats), do: {:ok, Map.delete(stats, :__struct__)}

@@ -1,326 +1,211 @@
-# Item Seed-Based Randomization Game Plan
+# Item Effect Variance Game Plan
 
 ## Overview
 
-This document outlines the implementation plan for adding seed-based randomization to item damage and armor values. The goal is to make items more interesting while maintaining consistency across game restarts.
+This document outlines the implementation plan for adding variance to item effects, making them more interesting while maintaining consistency across game restarts. The goal is to add variance directly to the existing effects system rather than creating a separate stats system.
 
 ## Current System
 
-### Damage System
-- Damage is handled through effects with kind "damage"
-- Each damage effect has:
-  - `type`: The damage type (e.g., "slashing", "piercing")
-  - `amount`: The base damage amount
-- Damage is modified by character stats and random swing
-
-### Armor System
-- Armor items have:
-  - `slot`: The equipment slot
-  - `armor`: The base armor value
-- Armor can have stat boosts and damage type resistances
+### Effects System
+- Damage effects with type and amount
+- Recovery effects with type and amount
+- Stat effects with field, mode, and amount
+- Effects are modified by character stats and random swing
 
 ## Implementation Plan
 
-### 1. Schema Updates
+### 1. Effect Schema Updates
 
-#### A. Item Schema (`lib/data/item.ex`)
+#### A. Update Effect Structure
 ```elixir
-# Add seed field to Item schema
-schema "items" do
-  # ... existing fields ...
-  field :seed, Ecto.UUID, read_after_writes: true
-  timestamps()
-end
-
-# Update changeset to generate seed if not present
-def changeset(struct, params) do
-  struct
-  |> cast(params, [...existing_fields..., :seed])
-  |> validate_required([...existing_fields...])
-  |> put_seed()
-end
-
-defp put_seed(changeset) do
-  case get_change(changeset, :seed) do
-    nil -> put_change(changeset, :seed, Ecto.UUID.generate())
-    _ -> changeset
-  end
-end
-```
-
-#### B. Stats Schema Updates
-```elixir
-# Update weapon stats structure
+# Update damage effect structure
 %{
-  "damage" => %{
+  "kind" => "damage",
+  "type" => String.t(),
+  "amount" => %{
     "base" => integer(),
     "variance" => integer(),
-    "type" => String.t()
+    "min" => integer(),  # Optional, for UI display
+    "max" => integer()   # Optional, for UI display
   }
 }
 
-# Update armor stats structure
+# Update recover effect structure
 %{
-  "armor" => %{
+  "kind" => "recover",
+  "type" => atom(),
+  "amount" => %{
     "base" => integer(),
-    "variance" => integer()
-  },
-  "slot" => atom()
+    "variance" => integer(),
+    "min" => integer(),  # Optional, for UI display
+    "max" => integer()   # Optional, for UI display
+  }
 }
 ```
 
-### 2. Validator Updates
+### 2. Effect Validator Updates
 
-#### A. Stats Validator (`lib/data/stats.ex`)
+#### A. Update Effect Validator (`lib/data/effect.ex`)
 ```elixir
-def valid_weapon?(stats) do
-  case stats do
-    %{"damage" => %{"base" => base, "variance" => variance, "type" => type}} 
-    when is_integer(base) and is_integer(variance) and is_binary(type) ->
+def valid_damage?(effect) do
+  case effect do
+    %{type: type, amount: %{base: base, variance: variance}} 
+    when is_binary(type) and is_integer(base) and is_integer(variance) ->
       base > 0 and variance >= 0
+    %{type: type, amount: amount} when is_binary(type) and is_integer(amount) ->
+      amount > 0
     _ -> false
   end
 end
 
-def valid_armor?(stats) do
-  case stats do
-    %{"armor" => %{"base" => base, "variance" => variance}, "slot" => slot} 
-    when is_integer(base) and is_integer(variance) ->
-      base > 0 and variance >= 0 and valid_slot?(%{slot: slot})
+def valid_recover?(effect) do
+  case effect do
+    %{type: type, amount: %{base: base, variance: variance}} 
+    when type in ["health", "skill", "move"] and is_integer(base) and is_integer(variance) ->
+      base > 0 and variance >= 0
+    %{type: type, amount: amount} 
+    when type in ["health", "skill", "move"] and is_integer(amount) ->
+      amount > 0
     _ -> false
   end
 end
 ```
 
-### 3. Randomization Implementation
+### 3. Effect Calculation Updates
 
-#### A. Random Number Generator (`lib/game/random.ex`)
-```elixir
-defmodule Game.Random do
-  @moduledoc """
-  Deterministic random number generation using seeds
-  """
-
-  def with_seed(seed, fun) do
-    <<a::32, b::32, c::32>> = :crypto.hash(:sha256, seed)
-    {seed_state, _} = :rand.seed_s(:exs1024, {a, b, c})
-    {result, _} = :rand.seed_s(seed_state, fun.())
-    result
-  end
-
-  def random_range(min, max) do
-    :rand.uniform_s(max - min + 1) + min - 1
-  end
-end
-```
-
-#### B. Item Compilation (`lib/data/item/compiled.ex`)
-```elixir
-def compile(item) do
-  compiled_item = struct(__MODULE__, Map.take(item, @fields))
-  
-  Game.Random.with_seed(item.seed, fn ->
-    compiled_item
-    |> merge_stats(item)
-    |> merge_effects(item)
-  end)
-end
-
-defp merge_stats(compiled_item, %{item_aspectings: item_aspectings}) do
-  stats = Enum.reduce(
-    item_aspectings,
-    compiled_item.stats,
-    &_merge_stats(&1, &2, compiled_item.level)
-  )
-  %{compiled_item | stats: stats}
-end
-
-defp _merge_stats(%{item_aspect: %{type: "armor", stats: stats}}, acc_stats, level) do
-  base = stats.armor.base
-  variance = stats.armor.variance
-  armor = Game.Random.random_range(base - variance, base + variance)
-  armor = scale_for_level(level, armor)
-  %{acc_stats | armor: acc_stats.armor + armor}
-end
-```
-
-### 4. Effect Calculation Updates
-
-#### A. Damage Calculation (`lib/game/effect.ex`)
+#### A. Update Effect Calculation (`lib/game/effect.ex`)
 ```elixir
 def calculate_damage(effect, stats) do
   case DamageTypes.get(effect.type) do
     {:ok, damage_type} ->
       stat = Map.get(stats, damage_type.stat_modifier)
-      base = effect.amount.base
-      variance = effect.amount.variance
-      damage = Game.Random.random_range(base - variance, base + variance)
-      modifier = 1 + stat / damage_type.boost_ratio
-      modified_amount = max(round(Float.ceil(damage * modifier)), 0)
+      random_swing = Enum.random(@random_effect_range)
+      modifier = 1 + stat / damage_type.boost_ratio + random_swing / 100
+
+      # Handle both old and new amount structures
+      amount = case effect.amount do
+        %{base: base, variance: variance} ->
+          Game.Random.random_range(base - variance, base + variance)
+        amount when is_integer(amount) ->
+          amount
+      end
+
+      modified_amount = max(round(Float.ceil(amount * modifier)), 0)
       effect |> Map.put(:amount, modified_amount)
+
     _ ->
       effect
   end
 end
 ```
 
-### 5. Admin Panel Updates
+### 4. Admin Panel Updates
 
-#### A. Item Form (`lib/web/templates/admin/item/_form.html.eex`)
-```elixir
-# Add variance fields for damage and armor
-<div class="form-group">
-  <%= label f, :damage_variance, class: "col-md-4" %>
-  <div class="col-md-8">
-    <%= number_input f, :damage_variance, class: "form-control" %>
-    <span class="help-block">How much the damage can vary from base</span>
-  </div>
-</div>
+#### A. Update Effect Form (`assets/admin/js/effects.jsx`)
+```jsx
+class DamageEffect extends BaseEffect {
+  constructor(props) {
+    super(props);
+    let effect = props.effect;
+    this.state = {
+      kind: "damage",
+      type: effect.type,
+      amount: effect.amount.base || effect.amount,
+      variance: effect.amount.variance || 0
+    };
+  }
 
-<div class="form-group">
-  <%= label f, :armor_variance, class: "col-md-4" %>
-  <div class="col-md-8">
-    <%= number_input f, :armor_variance, class: "form-control" />
-    <span class="help-block">How much the armor can vary from base</span>
-  </div>
-</div>
+  render() {
+    return (
+      <div className="form-group row">
+        <label className="col-md-4">Kind: damage</label>
+        <div className="col-md-8">
+          <div className="row">
+            <div className="col-md-4">
+              <label>Damage Type</label>
+              <input type="text" value={this.state.type} 
+                     className="form-control" 
+                     onChange={this.handleUpdateField("type")} />
+            </div>
+            <div className="col-md-4">
+              <label>Base Amount</label>
+              <input type="number" value={this.state.amount} 
+                     className="form-control" 
+                     onChange={this.handleUpdateField("amount")} />
+            </div>
+            <div className="col-md-4">
+              <label>Variance</label>
+              <input type="number" value={this.state.variance} 
+                     className="form-control" 
+                     onChange={this.handleUpdateField("variance")} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 ```
 
-### 6. Migration Plan
+### 5. Migration Plan
 
-1. Create migration for adding seed field:
+1. Create migration for updating effect structures:
 ```elixir
-defmodule Data.Repo.Migrations.AddSeedToItems do
+defmodule Data.Repo.Migrations.UpdateEffectStructures do
   use Ecto.Migration
 
   def up do
-    # Enable UUID extension
-    execute "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
-    
-    # Backup existing items
-    execute """
-    CREATE TABLE items_backup AS 
-    SELECT * FROM items;
-    """
-    
-    # Add seed field
-    alter table(:items) do
-      add :seed, :uuid
-    end
-    
-    # Generate seeds for existing items
+    # Update damage effects
     execute """
     UPDATE items 
-    SET seed = uuid_generate_v4() 
-    WHERE seed IS NULL
-    """
-    
-    # Make seed field required
-    alter table(:items) do
-      modify :seed, :uuid, null: false
-    end
-    
-    # Create index on seed field
-    create index(:items, :seed)
-  end
-
-  def down do
-    # Remove index
-    drop index(:items, :seed)
-    
-    # Remove seed field
-    alter table(:items) do
-      remove :seed
-    end
-    
-    # Restore from backup
-    execute """
-    INSERT INTO items 
-    SELECT * FROM items_backup;
-    """
-    
-    # Drop backup table
-    drop table(:items_backup)
-    
-    # Drop UUID extension
-    execute "DROP EXTENSION IF EXISTS \"uuid-ossp\";"
-  end
-end
-```
-
-2. Update existing items to use new stats structure:
-```elixir
-defmodule Data.Repo.Migrations.UpdateItemStats do
-  use Ecto.Migration
-
-  def up do
-    # Backup existing items
-    execute """
-    CREATE TABLE items_backup AS 
-    SELECT * FROM items;
-    """
-    
-    # Update weapon stats
-    execute """
-    UPDATE items 
-    SET stats = jsonb_set(
-      stats,
-      '{damage}',
+    SET effects = jsonb_set(
+      effects,
+      '{amount}',
       jsonb_build_object(
-        'base', (stats->>'damage')::integer,
-        'variance', 0,
-        'type', 'slashing'
-      )
-    )
-    WHERE type = 'weapon'
-    """
-
-    # Update armor stats
-    execute """
-    UPDATE items 
-    SET stats = jsonb_set(
-      stats,
-      '{armor}',
-      jsonb_build_object(
-        'base', (stats->>'armor')::integer,
+        'base', (effects->>'amount')::integer,
         'variance', 0
       )
     )
-    WHERE type = 'armor'
+    WHERE effects->>'kind' = 'damage'
     """
-    
-    # Validate updates
+
+    # Update recover effects
     execute """
-    DO $$
-    BEGIN
-      IF EXISTS (
-        SELECT 1 FROM items 
-        WHERE type = 'weapon' 
-        AND NOT (stats->'damage' ? 'base' AND stats->'damage' ? 'variance' AND stats->'damage' ? 'type')
-      ) THEN
-        RAISE EXCEPTION 'Invalid weapon stats structure';
-      END IF;
-      
-      IF EXISTS (
-        SELECT 1 FROM items 
-        WHERE type = 'armor' 
-        AND NOT (stats->'armor' ? 'base' AND stats->'armor' ? 'variance')
-      ) THEN
-        RAISE EXCEPTION 'Invalid armor stats structure';
-      END IF;
-    END $$;
+    UPDATE items 
+    SET effects = jsonb_set(
+      effects,
+      '{amount}',
+      jsonb_build_object(
+        'base', (effects->>'amount')::integer,
+        'variance', 0
+      )
+    )
+    WHERE effects->>'kind' = 'recover'
     """
   end
 
   def down do
-    # Restore from backup
+    # Revert damage effects
     execute """
-    INSERT INTO items 
-    SELECT * FROM items_backup;
+    UPDATE items 
+    SET effects = jsonb_set(
+      effects,
+      '{amount}',
+      to_jsonb((effects->'amount'->>'base')::integer)
+    )
+    WHERE effects->>'kind' = 'damage'
     """
-    
-    # Drop backup table
-    drop table(:items_backup)
+
+    # Revert recover effects
+    execute """
+    UPDATE items 
+    SET effects = jsonb_set(
+      effects,
+      '{amount}',
+      to_jsonb((effects->'amount'->>'base')::integer)
+    )
+    WHERE effects->>'kind' = 'recover'
+    """
   end
 end
 ```
@@ -328,45 +213,37 @@ end
 ## Testing Plan
 
 1. Unit Tests:
-   - Test seed generation and validation
-   - Test random number generation with same seed
-   - Test stats validation for new structure
-   - Test damage and armor calculations
+   - Test effect validation for new structure
+   - Test damage and recovery calculations with variance
+   - Test random number generation
 
 2. Integration Tests:
-   - Test item compilation with seeds
-   - Test effect calculation with randomized values
+   - Test effect application with variance
    - Test admin panel form updates
+   - Test migration scripts
 
-3. Property-Based Tests:
-   - Test deterministic behavior with same seed
-   - Test different seeds produce different values
-   - Test value ranges stay within bounds
-
-4. Manual Testing:
+3. Manual Testing:
    - Create items with different variance values
-   - Verify randomization is consistent across restarts
+   - Verify randomization is consistent
    - Test edge cases (min/max values)
 
 ## Rollout Strategy
 
 1. Development:
-   - Implement schema changes
+   - Implement effect structure changes
    - Update validators
-   - Add randomization logic
+   - Add variance calculation
    - Update admin panel
 
 2. Testing:
    - Run unit tests
    - Run integration tests
-   - Run property-based tests
-   - Manual testing in development environment
+   - Manual testing in development
 
 3. Staging:
-   - Deploy to staging environment
+   - Deploy to staging
    - Test with existing items
    - Verify migration scripts
-   - Run dry-run verification task
 
 4. Production:
    - Schedule maintenance window
@@ -378,10 +255,10 @@ end
 
 1. Performance:
    - Monitor random number generation impact
-   - Consider caching compiled items
+   - Consider caching calculated effects
 
 2. Balance:
-   - Monitor item power levels
+   - Monitor effect power levels
    - Adjust variance ranges if needed
 
 3. Features:

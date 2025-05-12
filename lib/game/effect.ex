@@ -102,7 +102,16 @@ defmodule Game.Effect do
         stat = Map.get(stats, damage_type.stat_modifier)
         random_swing = Enum.random(@random_effect_range)
         modifier = 1 + stat / damage_type.boost_ratio + random_swing / 100
-        modified_amount = max(round(Float.ceil(effect.amount * modifier)), 0)
+
+        # Handle both old and new amount structures
+        amount = case effect.amount do
+          %{base: base, variance: variance} ->
+            Game.Random.random_range(base - variance, base + variance)
+          amount when is_integer(amount) ->
+            amount
+        end
+
+        modified_amount = max(round(Float.ceil(amount * modifier)), 0)
         effect |> Map.put(:amount, modified_amount)
 
       _ ->
@@ -121,8 +130,16 @@ defmodule Game.Effect do
   def calculate_recover(effect, _stats) do
     random_swing = Enum.random(@random_effect_range)
     modifier = 1 + random_swing / 100
-    modified_amount = round(Float.ceil(effect.amount * modifier))
 
+    # Handle both old and new amount structures
+    amount = case effect.amount do
+      %{base: base, variance: variance} ->
+        Game.Random.random_range(base - variance, base + variance)
+      amount when is_integer(amount) ->
+        amount
+    end
+
+    modified_amount = round(Float.ceil(amount * modifier))
     effect |> Map.put(:amount, modified_amount)
   end
 
@@ -170,8 +187,16 @@ defmodule Game.Effect do
         stat = Map.get(stats, damage_type.reverse_stat)
         random_swing = Enum.random(@random_effect_range)
         modifier = 1 + stat / damage_type.reverse_boost + random_swing / 100
-        modified_amount = round(Float.ceil(effect.amount / modifier))
 
+        # Handle both old and new amount structures
+        amount = case effect.amount do
+          %{base: base, variance: variance} ->
+            Game.Random.random_range(base - variance, base + variance)
+          amount when is_integer(amount) ->
+            amount
+        end
+
+        modified_amount = round(Float.ceil(amount / modifier))
         effect |> Map.put(:amount, modified_amount)
 
       _ ->
@@ -185,8 +210,16 @@ defmodule Game.Effect do
         stat = Map.get(stats, damage_type.reverse_stat)
         random_swing = Enum.random(@random_effect_range)
         modifier = 1 + stat / damage_type.reverse_boost + random_swing / 100
-        modified_amount = round(Float.ceil(effect.amount / modifier))
 
+        # Handle both old and new amount structures
+        amount = case effect.amount do
+          %{base: base, variance: variance} ->
+            Game.Random.random_range(base - variance, base + variance)
+          amount when is_integer(amount) ->
+            amount
+        end
+
+        modified_amount = round(Float.ceil(amount / modifier))
         effect |> Map.put(:amount, modified_amount)
 
       _ ->
@@ -232,10 +265,10 @@ defmodule Game.Effect do
     %{stats | skill_points: skill_points}
   end
 
-  def apply_effect(effect = %{kind: "recover/over-time", type: "endurance"}, stats) do
-    %{endurance_points: endurance_points, max_endurance_points: max_endurance_points} = stats
-    endurance_points = max_recover(endurance_points, effect.amount, max_endurance_points)
-    %{stats | endurance_points: endurance_points}
+  def apply_effect(effect = %{kind: "recover/over-time", type: "move"}, stats) do
+    %{move_points: move_points, max_move_points: max_move_points} = stats
+    move_points = max_recover(move_points, effect.amount, max_move_points)
+    %{stats | move_points: move_points}
   end
 
   def apply_effect(effect = %{kind: "recover", type: "health"}, stats) do
@@ -250,29 +283,20 @@ defmodule Game.Effect do
     %{stats | skill_points: skill_points}
   end
 
-  def apply_effect(effect = %{kind: "recover", type: "endurance"}, stats) do
-    %{endurance_points: endurance_points, max_endurance_points: max_endurance_points} = stats
-    endurance_points = max_recover(endurance_points, effect.amount, max_endurance_points)
-    %{stats | endurance_points: endurance_points}
+  def apply_effect(effect = %{kind: "recover", type: "move"}, stats) do
+    %{move_points: move_points, max_move_points: max_move_points} = stats
+    move_points = max_recover(move_points, effect.amount, max_move_points)
+    %{stats | move_points: move_points}
   end
 
   def apply_effect(_effect, stats), do: stats
 
   @doc """
-  Limit recovery to the max points
-
-      iex> Game.Effect.max_recover(10, 1, 15)
-      11
-
-      iex> Game.Effect.max_recover(10, 6, 15)
-      15
+  Get the max amount that can be recovered
   """
   @spec max_recover(integer(), integer(), integer()) :: integer()
-  def max_recover(current_points, amount, max_points) do
-    case current_points + amount do
-      current_points when current_points > max_points -> max_points
-      current_points -> current_points
-    end
+  def max_recover(current, amount, max) do
+    min(current + amount, max)
   end
 
   @doc """
